@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import DataFetch from './DataFetch'
+import DataFetch from './components/DataFetch'
 
 function App() {
   return (
