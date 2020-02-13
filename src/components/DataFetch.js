@@ -2,15 +2,15 @@
 
 TODO:
 
-data processing, use hooks, autocomplete for locations
+Current: data processing w/ new api, create static version of app, extract into multiple components
 
-
+Next: autocomplete for locations (dynamic querying)
 
 */
 
 import React, { Component } from 'react';
 
-const baseUrl = 'http://api.openweathermap.org/data/2.5/forecast?units=imperial&APPID=26c157eab6caa2265bab9800960adaf9'
+// const baseUrl = 
 
 const errorStyle = {
   color: 'red',
@@ -20,7 +20,7 @@ const errorStyle = {
 class DataFetch extends Component {
   state = {
     weatherData: null,
-    location: 'san francisco,us',
+    // location: 'San Francisco,CA',
     error: false
   }
 
@@ -29,18 +29,18 @@ class DataFetch extends Component {
   }
 
 
-  handleChange = e => {
-    this.setState({ location: e.target.value }) 
-  }
+  // handleChange = e => {
+  //   this.setState({ location: e.target.value }) 
+  // }
 
   handleSubmit = e => {
     this.fetchData() 
   }
 
   fetchData = () => {
-    const url = `${baseUrl}&q=${this.state.location}`
+    // const url = `${baseUrl}&q=${this.state.location}`
     
-    fetch(url)
+    fetch('./data/weather.json')
       .then(res => {
         if (!res.ok) {
           throw 'invalid'
@@ -55,7 +55,7 @@ class DataFetch extends Component {
   deserializeApiData = data => {
     console.log('deserializing', data)
     return (
-      data.list.slice(1, 6).map(d => ({date: d.dt, temp: d.main.temp})) //next 5 weather forecasts (for cards)
+      data.list.slice(1, 6).map(d => ({date: d.dt, temp: d.main.temp})) 
     )
   }
   */
@@ -67,13 +67,11 @@ class DataFetch extends Component {
       return <div>loading...</div>
     }
 
-    const currTemp = `Currently: ${Math.round(weatherData.list[0].main.temp)}`
+    const currTemp = `Today: ${weatherData.data[0].temp}`
 
-    const fiveDayForecast = weatherData.list.slice(1, 6).map(d => ({date: d.dt, temp: Math.round(d.main.temp)}))
+    const fiveDayForecast = weatherData.data.slice(1, 6).map(d => ({time: d.ts, temp: Math.round(d.temp)})) 
 
-    const date = weatherData.list[0].dt_txt
 
-    console.log(date)
 
     return (
       <div className='action'>
@@ -81,7 +79,6 @@ class DataFetch extends Component {
           <input
             type='text'
             placeholder='san francisco,us'
-            onChange={this.handleChange}
           />
         </div>
 
@@ -96,7 +93,7 @@ class DataFetch extends Component {
 
         <div className='forecasts'>
           {fiveDayForecast.map(interval => 
-            <div key={interval.date}>{interval.temp}</div>
+            <div key={interval.time}>{interval.temp}</div>
           )}
         </div>
       </div>
