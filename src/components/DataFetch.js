@@ -2,13 +2,15 @@
 
 TODO:
 
-Current: data processing w/ new api, create static version of app, extract into multiple components
+Current: data processing w/ new api, extract into multiple components
 
 Next: autocomplete for locations (dynamic querying)
 
 */
 
 import React, { Component } from 'react';
+import ForecastCard from './ForecastCard'
+import CurrentWeather from './CurrentWeather'
 
 // const baseUrl = 
 
@@ -17,11 +19,43 @@ const errorStyle = {
   fontSize: '2em'
 };
 
+
+const getCurrentWeather = weatherData => {
+  const currentWeatherInfo = weatherData.data.slice(0, 1).map(d => ({
+    time: d.ts,
+    currTemp: Math.round(d.temp),
+    currDesc: d.weather.description,
+    precip: `${d.pop}%`,
+    windSpd: d.wind_spd
+    // date
+  }))
+  return currentWeatherInfo
+}
+
+const getForecasts = weatherData => {
+  const fiveDayForecast = weatherData.data.slice(1, 6).map(d => ({
+    time: d.ts, 
+    hiTemp: Math.round(d.high_temp), 
+    lowTemp: Math.round(d.low_temp), 
+    description: d.weather.description
+    // days of the week
+  }))
+  return fiveDayForecast
+}
+
+const getLocationString = weatherData => {
+  return `${weatherData.city_name}, ${weatherData.state_code} ${weatherData.country_code}`
+}
+
 class DataFetch extends Component {
   state = {
+    isLoading: true,
     weatherData: null,
     // location: 'San Francisco,CA',
+    fiveDayForecast: null,
+    currentWeatherInfo: null,
     error: false
+
   }
 
   componentDidMount() {
@@ -34,23 +68,40 @@ class DataFetch extends Component {
   // }
 
   handleSubmit = e => {
-    this.fetchData() 
+    this.fetchData()
   }
 
   fetchData = () => {
     // const url = `${baseUrl}&q=${this.state.location}`
-    
-    fetch('./data/weather.json')
-      .then(res => {
-        if (!res.ok) {
-          throw 'invalid'
-        }
-        return res.json()
-      })
-      // .then(this.deserializeApiData)
-      .then(weatherData => this.setState({ weatherData, error: false }, () => console.log(weatherData)))
-      .catch(e => this.setState({ error: e }, () => console.log(e)))
+    this.setState({ isLoading: true, error: false }, () => {
+      fetch('./data/weather.json')
+        .then(res => {
+          if (!res.ok) {
+            return Promise.reject(`Looks like there was a problem. Status Code: ${res.status}`)
+          }
+          return res.json()
+        })
+        // .then(this.deserializeApiData)
+        .then(weatherData => 
+          this.setState({ 
+            currentWeatherInfo: getCurrentWeather(weatherData), 
+            fiveDayForecast: getForecasts(weatherData),
+            locationString: getLocationString(weatherData),
+            isLoading: false,
+            error: false 
+          })
+        )
+        .catch(e => {
+          this.setState({ 
+            isLoading: false, 
+            error: e 
+          }, () => 
+            console.log(e)
+          )
+        })
+    })
   }
+
   /*
   deserializeApiData = data => {
     console.log('deserializing', data)
@@ -61,41 +112,35 @@ class DataFetch extends Component {
   */
 
   render() {
-    const { weatherData, error } = this.state
+    const { isLoading, error, locationString, currentWeatherInfo, fiveDayForecast } = this.state
 
-    if (!weatherData) {
+    if (isLoading) {
       return <div>loading...</div>
     }
 
-    const currTemp = `Today: ${weatherData.data[0].temp}`
-
-    const fiveDayForecast = weatherData.data.slice(1, 6).map(d => ({time: d.ts, temp: Math.round(d.temp)})) 
-
-
+    console.log(this.state)
 
     return (
-      <div className='action'>
-        <div className='search-box'>
-          <input
-            type='text'
-            placeholder='san francisco,us'
-          />
+      <div className='wrapper'>
+
+        <div className='action'>
+          <div className='search-box'>
+            <input
+              type='text'
+              placeholder='san francisco,us'
+            />
+          </div>
+          <div className='submit-btn'>
+            <input type='submit' value='submit' onClick={this.handleSubmit}/>
+          </div>
         </div>
 
-        <div className='submit-btn'>
-          <input type='submit' value='submit' onClick={this.handleSubmit}/>
-        </div>
+        <CurrentWeather currentWeatherInfo={currentWeatherInfo} locationString={locationString}/>
 
-        <div className='currWeather'>
-          {error && <div style={errorStyle}>Please enter a valid location</div>}
-          {currTemp}
-        </div>
+        {error && <div style={errorStyle}>Please enter a valid location</div>}
 
-        <div className='forecasts'>
-          {fiveDayForecast.map(interval => 
-            <div key={interval.time}>{interval.temp}</div>
-          )}
-        </div>
+        <ForecastCard fiveDayForecast={fiveDayForecast}/>
+
       </div>
     )
   }
