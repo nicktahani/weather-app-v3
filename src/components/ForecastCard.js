@@ -6,6 +6,12 @@ const ForecastCard = ({ fiveDayForecast }) => {
       <div className='forecasts'>
           {fiveDayForecast.map(forecast => 
             <div key={forecast.time} className='forecast-info'>
+              <div className='forecast-day'>
+                {forecast.dayOfWeek}
+              </div>
+              <div className='forecast-icon'>
+                icon
+              </div>
               <div className='forecast-desc'>
                 {forecast.description}
               </div>

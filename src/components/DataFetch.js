@@ -11,6 +11,8 @@ Next: autocomplete for locations (dynamic querying)
 import React, { Component } from 'react';
 import ForecastCard from './ForecastCard'
 import CurrentWeather from './CurrentWeather'
+import '../css/DataFetch.css'
+import * as moment from 'moment';
 
 // const baseUrl = 
 
@@ -19,15 +21,14 @@ const errorStyle = {
   fontSize: '2em'
 };
 
-
 const getCurrentWeather = weatherData => {
   const currentWeatherInfo = weatherData.data.slice(0, 1).map(d => ({
     time: d.ts,
     currTemp: Math.round(d.temp),
     currDesc: d.weather.description,
     precip: `${d.pop}%`,
-    windSpd: d.wind_spd
-    // date
+    windSpd: d.wind_spd,
+    //currDate: moment(d.valid_date).format('MMMM DD, YYYY')
   }))
   return currentWeatherInfo
 }
@@ -37,8 +38,8 @@ const getForecasts = weatherData => {
     time: d.ts, 
     hiTemp: Math.round(d.high_temp), 
     lowTemp: Math.round(d.low_temp), 
-    description: d.weather.description
-    // days of the week
+    description: d.weather.description,
+    dayOfWeek: moment(d.valid_date).format('ddd'), 
   }))
   return fiveDayForecast
 }
@@ -122,25 +123,25 @@ class DataFetch extends Component {
 
     return (
       <div className='wrapper'>
-
-        <div className='action'>
-          <div className='search-box'>
-            <input
-              type='text'
-              placeholder='san francisco,us'
-            />
+        <div className='top'>
+          <div className='date-info'>
+            date
           </div>
-          <div className='submit-btn'>
-            <input type='submit' value='submit' onClick={this.handleSubmit}/>
+          <div className='action'>
+            <div className='search-box'>
+              <input
+                type='text'
+                placeholder='san francisco,us'
+              />
+            </div>
+            <div className='submit-btn'>
+              <input type='submit' value='submit' onClick={this.handleSubmit}/>
+            </div>
           </div>
         </div>
-
         <CurrentWeather currentWeatherInfo={currentWeatherInfo} locationString={locationString}/>
-
         {error && <div style={errorStyle}>Please enter a valid location</div>}
-
         <ForecastCard fiveDayForecast={fiveDayForecast}/>
-
       </div>
     )
   }

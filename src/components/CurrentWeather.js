@@ -4,7 +4,7 @@ import '../css/CurrentWeather.css'
 const CurrentWeather = ({ currentWeatherInfo, locationString }) => {
   return (
     <div className='currWeather'>
-      {currentWeatherInfo && currentWeatherInfo.map(curr =>
+      {currentWeatherInfo.map(curr =>
         <div key={curr.time} className='curr-info'>
           <div className='forecast-image'>
             image
