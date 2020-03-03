@@ -1,20 +1,23 @@
 import React from 'react'
 import '../css/CurrentWeather.css'
 
+import { WeatherIcon } from './WeatherIcon'
+
+
 const CurrentWeather = ({ currentWeatherInfo, locationString }) => {
   return (
     <div className='currWeather'>
       {currentWeatherInfo.map(curr =>
         <div key={curr.time} className='curr-info'>
-          <div className='forecast-image'>
-            image
+          <div className='curr-icon'>
+            <WeatherIcon icon={curr.icon} />
           </div>
           <div className='location-info'> 
             <div>
               {locationString}
             </div>
-            <div>
-              {curr.currTemp}
+            <div className='curr-temp'>
+              {curr.currTemp}&#176;F
             </div>
             <div>
               {curr.currDesc}

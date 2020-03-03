@@ -1,8 +1,19 @@
 .forecasts {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .forecast-info {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  width: 150px;
+  background-color:#3B86B1;
+  text-align:center;
+  color: #fff;
+  padding: 30px;
+  margin:5px;
+  border-style: solid;
+  border-color: #3B86B1;
+  border-radius: 15px;
 }

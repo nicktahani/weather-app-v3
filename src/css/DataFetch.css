@@ -1,8 +1,13 @@
 .top {
   display: flex;
   justify-content: space-around;
+  margin: 4em;
 }
 
 .submit-btn {
   text-align: right;
+}
+
+.date-info {
+  font-size: 1.5em;
 }

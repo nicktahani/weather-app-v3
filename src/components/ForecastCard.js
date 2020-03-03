@@ -1,6 +1,8 @@
 import React from 'react'
 import '../css/ForecastCard.css'
 
+import { WeatherIcon } from './WeatherIcon'
+
 const ForecastCard = ({ fiveDayForecast }) => {
   return (
       <div className='forecasts'>
@@ -10,13 +12,13 @@ const ForecastCard = ({ fiveDayForecast }) => {
                 {forecast.dayOfWeek}
               </div>
               <div className='forecast-icon'>
-                icon
+                <WeatherIcon icon={forecast.icon} />
               </div>
               <div className='forecast-desc'>
                 {forecast.description}
               </div>
               <div className='hi-low'>
-                {`${forecast.hiTemp}, ${forecast.lowTemp}`}
+                <b>{forecast.hiTemp}&#176;</b> {forecast.lowTemp}&#176;
               </div>
             </div>
           )}

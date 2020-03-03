@@ -2,7 +2,7 @@
 
 TODO:
 
-Current: data processing w/ new api, extract into multiple components
+Current: wrap-up data processing, credits in readme
 
 Next: autocomplete for locations (dynamic querying)
 
@@ -13,6 +13,9 @@ import ForecastCard from './ForecastCard'
 import CurrentWeather from './CurrentWeather'
 import '../css/DataFetch.css'
 import * as moment from 'moment';
+
+
+import { weatherIconMap } from './WeatherIcon/weatherIconMap'
 
 // const baseUrl = 
 
@@ -27,10 +30,15 @@ const getCurrentWeather = weatherData => {
     currTemp: Math.round(d.temp),
     currDesc: d.weather.description,
     precip: `${d.pop}%`,
-    windSpd: d.wind_spd,
+    windSpd: `${d.wind_spd} mph`,
+    icon: weatherIconMap[d.weather.code]
     //currDate: moment(d.valid_date).format('MMMM DD, YYYY')
   }))
   return currentWeatherInfo
+}
+
+const getCurrentDate = weatherData => {
+  return moment(weatherData.data[0].valid_date).format('dddd MMMM DD, YYYY')
 }
 
 const getForecasts = weatherData => {
@@ -40,6 +48,7 @@ const getForecasts = weatherData => {
     lowTemp: Math.round(d.low_temp), 
     description: d.weather.description,
     dayOfWeek: moment(d.valid_date).format('ddd'), 
+    icon: weatherIconMap[d.weather.code]
   }))
   return fiveDayForecast
 }
@@ -88,6 +97,7 @@ class DataFetch extends Component {
             currentWeatherInfo: getCurrentWeather(weatherData), 
             fiveDayForecast: getForecasts(weatherData),
             locationString: getLocationString(weatherData),
+            currentDate: getCurrentDate(weatherData),
             isLoading: false,
             error: false 
           })
@@ -113,7 +123,7 @@ class DataFetch extends Component {
   */
 
   render() {
-    const { isLoading, error, locationString, currentWeatherInfo, fiveDayForecast } = this.state
+    const { isLoading, error, locationString, currentDate, currentWeatherInfo, fiveDayForecast } = this.state
 
     if (isLoading) {
       return <div>loading...</div>
@@ -125,7 +135,7 @@ class DataFetch extends Component {
       <div className='wrapper'>
         <div className='top'>
           <div className='date-info'>
-            date
+            {currentDate}
           </div>
           <div className='action'>
             <div className='search-box'>
@@ -139,9 +149,14 @@ class DataFetch extends Component {
             </div>
           </div>
         </div>
-        <CurrentWeather currentWeatherInfo={currentWeatherInfo} locationString={locationString}/>
+        <CurrentWeather 
+          currentWeatherInfo={currentWeatherInfo} 
+          locationString={locationString}
+        />
         {error && <div style={errorStyle}>Please enter a valid location</div>}
-        <ForecastCard fiveDayForecast={fiveDayForecast}/>
+        <ForecastCard 
+          fiveDayForecast={fiveDayForecast}
+        />
       </div>
     )
   }
