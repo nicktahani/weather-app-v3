@@ -142,10 +142,15 @@ class DataFetch extends Component {
               <input
                 type='text'
                 placeholder='san francisco,us'
+                autoFocus='autofocus'
               />
             </div>
             <div className='submit-btn'>
-              <input type='submit' value='submit' onClick={this.handleSubmit}/>
+              <input 
+                type='submit' 
+                value='submit' 
+                onClick={this.handleSubmit}
+              />
             </div>
           </div>
         </div>
