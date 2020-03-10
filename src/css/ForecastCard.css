@@ -17,3 +17,8 @@
   border-color: #3B86B1;
   border-radius: 15px;
 }
+
+.forecast-icon img {
+  width: 150px;
+  height: 150px;
+}

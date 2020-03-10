@@ -19,3 +19,11 @@ code {
     monospace;
 }
 
+@media (max-width: 767px) { 
+  .currWeather {margin: 1em;} 
+  .date-info {display: none;}
+  .curr-info {flex-direction: column-reverse;}
+  .precip-wind {display: none;}
+  .location-info{font-size: 0.5em;}
+
+}

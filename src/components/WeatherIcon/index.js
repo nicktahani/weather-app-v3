@@ -13,7 +13,6 @@ export function WeatherIcon ({ icon }) {
     <img 
       src={`${process.env.PUBLIC_URL}/weather-icons/svg/${icon}.svg`} 
       alt={icon} 
-      style={{width: '150px', height: '150px'}}
     />
   )
 }

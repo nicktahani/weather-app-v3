@@ -30,7 +30,7 @@ const getCurrentWeather = weatherData => {
     currTemp: Math.round(d.temp),
     currDesc: d.weather.description,
     precip: `${d.pop}%`,
-    windSpd: `${d.wind_spd} mph`,
+    windSpd: `${d.wind_spd} m/s`,
     icon: weatherIconMap[d.weather.code]
     //currDate: moment(d.valid_date).format('MMMM DD, YYYY')
   }))

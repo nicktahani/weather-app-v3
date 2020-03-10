@@ -24,10 +24,12 @@ const CurrentWeather = ({ currentWeatherInfo, locationString }) => {
             </div>
           </div>
           <div className='precip-wind'>
-            <div>
+            <div className='precip'>
+              <WeatherIcon icon={'wi-humidity'} />
               {curr.precip}
             </div>
-            <div> 
+            <div className='wind'>
+              <WeatherIcon icon={'wi-windy'} />
               {curr.windSpd}
             </div>
           </div>
