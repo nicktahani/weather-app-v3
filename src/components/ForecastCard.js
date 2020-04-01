@@ -4,6 +4,7 @@ import '../css/ForecastCard.css'
 import { WeatherIcon } from './WeatherIcon'
 
 const ForecastCard = ({ fiveDayForecast }) => {
+  console.log(fiveDayForecast)
   return (
       <div className='forecasts'>
           {fiveDayForecast.map(forecast => 

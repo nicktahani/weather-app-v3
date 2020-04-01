@@ -1,68 +1,34 @@
 /*
 
-TODO:
+Fetching weather data from weatherbit
 
-Current: wrap-up data processing, credits in readme
-
-Next: autocomplete for locations (dynamic querying)
+check error display
 
 */
 
 import React, { Component } from 'react';
 import ForecastCard from './ForecastCard'
 import CurrentWeather from './CurrentWeather'
+import Autocomplete from './Autocomplete'
 import '../css/DataFetch.css'
-import * as moment from 'moment';
+import { getCurrentWeather, getCurrentDate, getForecasts, getLocationString, formatForApi } from '../util/weather.js'
 
-
-import { weatherIconMap } from './WeatherIcon/weatherIconMap'
-
-// const baseUrl = 
+const apiKey = process.env.REACT_APP_API_KEY
+const baseUrl = `https://api.weatherbit.io/v2.0/forecast/daily?units=I&days=6&key=${apiKey}`
 
 const errorStyle = {
   color: 'red',
   fontSize: '2em'
 };
 
-const getCurrentWeather = weatherData => {
-  const currentWeatherInfo = weatherData.data.slice(0, 1).map(d => ({
-    time: d.ts,
-    currTemp: Math.round(d.temp),
-    currDesc: d.weather.description,
-    precip: `${d.pop}%`,
-    windSpd: `${d.wind_spd} m/s`,
-    icon: weatherIconMap[d.weather.code]
-    //currDate: moment(d.valid_date).format('MMMM DD, YYYY')
-  }))
-  return currentWeatherInfo
-}
-
-const getCurrentDate = weatherData => {
-  return moment(weatherData.data[0].valid_date).format('dddd MMMM DD, YYYY')
-}
-
-const getForecasts = weatherData => {
-  const fiveDayForecast = weatherData.data.slice(1, 6).map(d => ({
-    time: d.ts, 
-    hiTemp: Math.round(d.high_temp), 
-    lowTemp: Math.round(d.low_temp), 
-    description: d.weather.description,
-    dayOfWeek: moment(d.valid_date).format('ddd'), 
-    icon: weatherIconMap[d.weather.code]
-  }))
-  return fiveDayForecast
-}
-
-const getLocationString = weatherData => {
-  return `${weatherData.city_name}, ${weatherData.state_code} ${weatherData.country_code}`
-}
 
 class DataFetch extends Component {
   state = {
     isLoading: true,
     weatherData: null,
-    // location: 'San Francisco,CA',
+    location: {cityName: 'San Francisco', stateCode: 'CA', countryCode: 'US'},
     fiveDayForecast: null,
+    selectedResult: null,
     currentWeatherInfo: null,
     error: false
 
@@ -72,27 +38,34 @@ class DataFetch extends Component {
     this.fetchData()
   }
 
-
-  // handleChange = e => {
-  //   this.setState({ location: e.target.value }) 
-  // }
-
-  handleSubmit = e => {
-    this.fetchData()
+  onSelectResult = result => {
+    this.setState({ location : result }, () => {
+      this.fetchData()
+    })
   }
 
   fetchData = () => {
-    // const url = `${baseUrl}&q=${this.state.location}`
+    const { location } = this.state
+
+    const locationQueryString = [
+      location.cityName, 
+      location.stateCode, 
+      location.countryCode
+    ].join(',')
+
+    const searchString = formatForApi(locationQueryString)
+
+    const url = `${baseUrl}&city=${searchString}`
     this.setState({ isLoading: true, error: false }, () => {
-      fetch('./data/weather.json')
+      fetch(url)
         .then(res => {
           if (!res.ok) {
             return Promise.reject(`Looks like there was a problem. Status Code: ${res.status}`)
           }
           return res.json()
         })
-        // .then(this.deserializeApiData)
         .then(weatherData => 
+          console.log('xxx', getForecasts(weatherData), weatherData.data.length) ||
           this.setState({ 
             currentWeatherInfo: getCurrentWeather(weatherData), 
             fiveDayForecast: getForecasts(weatherData),
@@ -113,20 +86,15 @@ class DataFetch extends Component {
     })
   }
 
-  /*
-  deserializeApiData = data => {
-    console.log('deserializing', data)
-    return (
-      data.list.slice(1, 6).map(d => ({date: d.dt, temp: d.main.temp})) 
-    )
-  }
-  */
-
   render() {
     const { isLoading, error, locationString, currentDate, currentWeatherInfo, fiveDayForecast } = this.state
 
     if (isLoading) {
       return <div>loading...</div>
+    }
+
+    if (error) {
+      return 'error'
     }
 
     console.log(this.state)
@@ -139,29 +107,16 @@ class DataFetch extends Component {
           </div>
           <div className='action'>
             <div className='search-box'>
-              <input
-                type='text'
-                placeholder='san francisco,us'
-                autoFocus='autofocus'
-              />
-            </div>
-            <div className='submit-btn'>
-              <input 
-                type='submit' 
-                value='submit' 
-                onClick={this.handleSubmit}
-              />
+              <Autocomplete onSelectResult={this.onSelectResult} />
+              {error && <div style={errorStyle}>Please enter a valid location</div>}
             </div>
           </div>
-        </div>
+        </div> 
         <CurrentWeather 
           currentWeatherInfo={currentWeatherInfo} 
           locationString={locationString}
         />
-        {error && <div style={errorStyle}>Please enter a valid location</div>}
-        <ForecastCard 
-          fiveDayForecast={fiveDayForecast}
-        />
+        <ForecastCard fiveDayForecast={fiveDayForecast} />
       </div>
     )
   }

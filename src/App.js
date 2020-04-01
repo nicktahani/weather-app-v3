@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { Component } from 'react';
 import './App.css';
 import DataFetch from './components/DataFetch'
 
-function App() {
-  return (
-    <DataFetch />
-  );
+class App extends Component {
+
+  render() {
+    return (
+      <div>
+        <DataFetch />
+      </div>
+    )
+  }
 }
 
 export default App;
