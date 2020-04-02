@@ -5,6 +5,7 @@ Fetching location data from server
 */
 
 import React, { Component } from 'react'
+import '../css/Autocomplete.css'
 
 const baseApiUrl = 'http://localhost:3005/api'
 
@@ -84,7 +85,7 @@ export default class Autocomplete extends Component {
       
         {isOpen && results &&
           results.map((result, i) =>  
-            <div 
+            <div className='items'
               onClick={() => this.handleSelectResult(result)} 
               key={i}
             >

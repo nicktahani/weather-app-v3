@@ -1,0 +1,11 @@
+.items {
+  padding: 0.5em;
+  cursor: pointer;
+  background-color: #fff;
+  color: #000;
+}
+  
+.items:hover {
+  background-color: #ccc;
+}
+  

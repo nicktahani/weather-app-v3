@@ -2,28 +2,15 @@
   display: flex;
   justify-content: space-around;
   margin: 4em;
-}
-
-.submit-btn {
-  text-align: right;
+  max-width: 1500px;
 }
 
 .date-info {
   font-size: 1.5em;
 }
 
-input[type=submit] {
-  border-color: #18C5F4;
-  background-color: #18C5F4;
-  border-style: solid;
-  border-radius: 10px;
-  color: #fff;
-  cursor: pointer;
-}
-
-input[type=submit]:hover {
-  background-color: #fff;
-  color: #000;
+.search-box {
+  position: absolute;
 }
 
 input[type=text] {
@@ -31,4 +18,6 @@ input[type=text] {
   border-radius: 10px;
   padding: 5px;
   padding-left: 10px;
+  border: 1px solid rgba(0,0,0,0.15);
+  box-shadow: 0 2px 3px rgba(0,0,0,0.06);
 }
